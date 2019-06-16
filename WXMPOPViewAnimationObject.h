@@ -11,7 +11,7 @@ typedef NS_ENUM(NSUInteger, WXMPopupHelpType) {
     WXMPopupHelpTypeDefault = 0,
 };
 
-@interface WXMPopupHelp : UIView
+@interface WXMPOPViewAnimationObject : UIView
 
 /** 显示的图层 nil为window */
 @property (nonatomic, weak) UIViewController *viewController;

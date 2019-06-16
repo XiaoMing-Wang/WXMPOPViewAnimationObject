@@ -9,8 +9,8 @@
 #define KHeight [UIScreen mainScreen].bounds.size.height
 #define KNotificationCenter [NSNotificationCenter defaultCenter]
 
-#import "WXMPopupHelp.h"
-@interface WXMPopupHelp ()
+#import "WXMPOPViewAnimationObject.h"
+@interface WXMPOPViewAnimationObject ()
 @property (nonatomic, strong) UIControl *blackView;
 @property (nonatomic, strong) UIView *contentView;
 
@@ -21,16 +21,17 @@
 @property (nonatomic, assign) CGRect oldRect;
 @end
 
-@implementation WXMPopupHelp
+@implementation WXMPOPViewAnimationObject
 
 /** 核心位置 */
 + (instancetype)wxmpopupHelpWithContentView:(UIView *)contentView {
     if (!contentView) return nil;
-    WXMPopupHelp *help = [WXMPopupHelp new];
+    WXMPOPViewAnimationObject *help = [WXMPOPViewAnimationObject new];
     help.contentView = contentView;
     [help setupInterface];
     return help;
 }
+
 - (void)setupInterface {
     _blackView = [[UIControl alloc] initWithFrame:[UIScreen mainScreen].bounds];
     _blackView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.5];
@@ -80,7 +81,7 @@
     _contentView.center = CGPointMake(self.frame.size.width / 2, self.frame.size.height / 2);
     _oldRect = _contentView.frame;
     _contentView.transform = CGAffineTransformMakeScale(0.1, 0.1);
-    WXMPopupHelp *sameView = [superView viewWithTag:WXMPopupHelpSign];
+    WXMPOPViewAnimationObject *sameView = [superView viewWithTag:WXMPopupHelpSign];
     if (sameView) [sameView removeFromSuperview];
     if (sameView) delay = 0.1;
     if (sameView) self.blackView.alpha = 1;
@@ -114,6 +115,7 @@
     if (_touchBlackHiden) [_blackView addTarget:self action:sel forControlEvents:UIControlEventTouchUpInside];
     else [_blackView removeTarget:self action:sel forControlEvents:UIControlEventTouchUpInside];
 }
+
 /** 键盘弹出 */
 - (void)keyBoardWillShow:(NSNotification *)sender {
     CGFloat keyboardH = [sender.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
