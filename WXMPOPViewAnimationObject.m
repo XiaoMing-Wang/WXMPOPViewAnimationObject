@@ -24,12 +24,12 @@
 @implementation WXMPOPViewAnimationObject
 
 /** 核心位置 */
-+ (instancetype)wxmpopupHelpWithContentView:(UIView *)contentView {
++ (instancetype)popupHelpWithContentView:(UIView *)contentView {
     if (!contentView) return nil;
-    WXMPOPViewAnimationObject *help = [WXMPOPViewAnimationObject new];
-    help.contentView = contentView;
-    [help setupInterface];
-    return help;
+    WXMPOPViewAnimationObject *animationObject = [WXMPOPViewAnimationObject new];
+    animationObject.contentView = contentView;
+    [animationObject setupInterface];
+    return animationObject;
 }
 
 - (void)setupInterface {
@@ -44,15 +44,15 @@
     self.touchBlackHiden = YES;
     self.contentView.alpha = 0;
     self.contentView.center = CGPointMake(self.frame.size.width / 2, self.frame.size.height / 2);
-    [self addSubview:_blackView];
+    [self addSubview:self.blackView];
     [self addSubview:self.contentView];
     
+    /** 递归获取TextField */
     if ([self getParentViewOfTextField:self.contentView]) {
         _oldRect = _contentView.frame;
         UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
         CGRect rect = [_contentView convertRect:_contentView.bounds toView:window];
         self.locationBottom = rect.origin.y + _contentView.frame.size.height;
-        
         [KNotificationCenter addObserver:self selector:@selector(keyBoardWillShow:)
                                     name:UIKeyboardWillShowNotification object:nil];
         [KNotificationCenter addObserver:self selector:@selector(keyBoardWillHide:)
@@ -61,7 +61,7 @@
 }
 
 /** 显示弹窗 */
-- (void)showPopupView {
+- (void)animationShowpopupView {
     UIView * superView = [[[UIApplication sharedApplication] delegate] window];
     if (self.superview) superView = self.superview;
     if (self.viewController) superView = self.viewController.view;
@@ -75,34 +75,53 @@
    
     CGFloat delay = 0;
     self.bounds = _blackView.bounds = superView.bounds;
-    
-    _blackView.alpha = 0;
-    _contentView.alpha = 0;
-    _contentView.center = CGPointMake(self.frame.size.width / 2, self.frame.size.height / 2);
-    _oldRect = _contentView.frame;
-    _contentView.transform = CGAffineTransformMakeScale(0.1, 0.1);
-    WXMPOPViewAnimationObject *sameView = [superView viewWithTag:WXMPopupHelpSign];
-    if (sameView) [sameView removeFromSuperview];
-    if (sameView) delay = 0.1;
-    if (sameView) self.blackView.alpha = 1;
-    [superView addSubview:self];
-   
-    [UIView animateWithDuration:0.32 delay:delay usingSpringWithDamping:1.0 initialSpringVelocity:0.0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+    WXMPOPViewAnimationObject *previous = [superView viewWithTag:WXMPopupHelpSign];
+    if (self.priorityType < previous.priorityType) return; /** 优先级低于界面上的弹窗 */
+    if (previous) {
+        delay = 0.2f;
         self.blackView.alpha = 1;
-        self.contentView.alpha = 1.0;
-        self.contentView.transform = CGAffineTransformIdentity;
-    } completion:nil];
+        [previous animationHidepopupView];
+    }
+    
+    [superView addSubview:self];
+    [self setDifferentAnimations:delay];
+}
+
+/** 设置动画 */
+- (void)setDifferentAnimations:(CGFloat)delay {
+    if (delay == 0) _blackView.alpha = 0;
+    _contentView.alpha = 0;
+    
+    if (self.popupAnimationType == WXMPOPViewAnimationDefault) {
+        _contentView.center = CGPointMake(self.frame.size.width / 2, self.frame.size.height / 2);
+        _oldRect = _contentView.frame;
+        _contentView.transform = CGAffineTransformMakeScale(0.1, 0.1);
+        [UIView animateWithDuration:0.32 delay:delay usingSpringWithDamping:1.0 initialSpringVelocity:0.0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+            self.blackView.alpha = 1;
+            self.contentView.alpha = 1.0;
+            self.contentView.transform = CGAffineTransformIdentity;
+        } completion:nil];
+    } else if (self.popupAnimationType == WXMPOPViewAnimationBottomSlide) {
+        [self setYWithView:_contentView y:[UIScreen mainScreen].bounds.size.height];
+        self.oldRect = self.contentView.frame;
+        [UIView animateWithDuration:0.32 delay:delay options:0 animations:^{
+            CGFloat height = self.frame.size.height;
+            CGFloat y = [UIScreen mainScreen].bounds.size.height - height;
+            [self setYWithView:self.contentView y:y];
+        } completion:nil];
+    }
 }
 
 /** 隐藏弹窗 */
-- (void)hidePopupView {
+- (void)animationHidepopupView {
     [_contentView endEditing:YES];
     [UIView animateWithDuration:0.15 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
         self.blackView.alpha = 0.0;
         self.contentView.alpha = 0.0;
     } completion:^(BOOL finished) {
         [self removeFromSuperview];
-        if (self.viewController && [self.viewController isKindOfClass:[UINavigationController class]])  {
+        if (self.viewController &&
+            [self.viewController isKindOfClass:[UINavigationController class]])  {
             UINavigationController * navigation = (UINavigationController *)self.viewController;
             navigation.interactivePopGestureRecognizer.enabled = self.interactivePop;
         }
@@ -110,10 +129,11 @@
 }
 
 - (void)setTouchBlackHiden:(BOOL)touchBlackHiden {
+    UIControlEvents event = UIControlEventTouchUpInside;
     _touchBlackHiden = touchBlackHiden;
-    SEL sel = @selector(hidePopupView);
-    if (_touchBlackHiden) [_blackView addTarget:self action:sel forControlEvents:UIControlEventTouchUpInside];
-    else [_blackView removeTarget:self action:sel forControlEvents:UIControlEventTouchUpInside];
+    SEL sel = @selector(hidepopupView);
+    if (_touchBlackHiden)[_blackView addTarget:self action:sel forControlEvents:event];
+    else [_blackView removeTarget:self action:sel forControlEvents:event];
 }
 
 /** 键盘弹出 */
@@ -148,5 +168,12 @@
         else if(subView.subviews.count > 0) [self getParentViewOfTextField:subView];
     }
     return nil;
+}
+
+/**  */
+- (void)setYWithView:(UIView *)targetView y:(CGFloat)y {
+    CGRect frame = targetView.frame;
+    frame.origin.y = y;
+    targetView.frame = frame;
 }
 @end
