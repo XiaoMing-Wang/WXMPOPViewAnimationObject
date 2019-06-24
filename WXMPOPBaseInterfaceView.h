@@ -30,6 +30,8 @@
 @end
 
 @interface WXMPOPBaseInterfaceView : UIView <WXMPOPViewAnimationProtocol>
+
+/** 按钮样式 */
 typedef NS_ENUM(NSUInteger, WXMPOPChooseType) {
     WXMPOPChooseTypeNone = 0,
     WXMPOPChooseTypeSingle,
@@ -60,7 +62,7 @@ typedef NS_ENUM(NSUInteger, WXMPOPChooseType) {
 
 @property (nonatomic, copy) void (^callback)(NSInteger index);
 @property (nonatomic, copy) void (^callbackTitle)(NSString *ident);
-@property (nonatomic, assign) id<WXMPOPBaseCallbackProtocol> delegate;
+@property (nonatomic, weak) id<WXMPOPBaseCallbackProtocol> delegate;
 
 /** 默认样式 */
 - (void)defaultInterfaceView;

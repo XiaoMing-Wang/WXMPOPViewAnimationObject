@@ -12,6 +12,7 @@ typedef NS_ENUM(NSUInteger, WXMPOPViewAnimationType) {
     WXMPOPViewAnimationBottomSlide, /** 底部弹出 */
 };
 
+/** 弹窗优先级 */
 typedef NS_ENUM(NSUInteger, WXMPOPViewPriorityType) {
     WXMPOPViewPriorityTypeDefault = 0,
     WXMPOPViewPriorityTypeLow,

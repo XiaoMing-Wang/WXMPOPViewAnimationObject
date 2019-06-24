@@ -5,7 +5,7 @@
 //  Created by edz on 2019/5/6.
 //  Copyright © 2019年 wq. All rights reserved.
 //
-#define WXMPopupHelpSign 100021
+#define WXMPopupHelpSign 10002
 #define KHeight [UIScreen mainScreen].bounds.size.height
 #define KNotificationCenter [NSNotificationCenter defaultCenter]
 
@@ -102,12 +102,12 @@
             self.contentView.transform = CGAffineTransformIdentity;
         } completion:nil];
     } else if (self.popupAnimationType == WXMPOPViewAnimationBottomSlide) {
-        [self setYWithView:_contentView y:[UIScreen mainScreen].bounds.size.height];
+        [self setContentY:[UIScreen mainScreen].bounds.size.height];
         self.oldRect = self.contentView.frame;
         [UIView animateWithDuration:0.32 delay:delay options:0 animations:^{
             CGFloat height = self.frame.size.height;
             CGFloat y = [UIScreen mainScreen].bounds.size.height - height;
-            [self setYWithView:self.contentView y:y];
+            [self setContentY:y];
         } completion:nil];
     }
 }
@@ -171,9 +171,9 @@
 }
 
 /**  */
-- (void)setYWithView:(UIView *)targetView y:(CGFloat)y {
-    CGRect frame = targetView.frame;
+- (void)setContentY:(CGFloat)y {
+    CGRect frame = _contentView.frame;
     frame.origin.y = y;
-    targetView.frame = frame;
+    _contentView.frame = frame;
 }
 @end
