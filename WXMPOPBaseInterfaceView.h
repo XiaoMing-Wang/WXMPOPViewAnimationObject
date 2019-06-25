@@ -52,6 +52,8 @@ typedef NS_ENUM(NSUInteger, WXMPOPChooseType) {
 @property (nonatomic, strong) CALayer *buttonVerticalLine;
 @property (nonatomic, strong) CALayer *reservedLine;
 
+@property (nonatomic, assign) CGFloat contentEdge;
+@property (nonatomic, assign) CGFloat messageEdge;
 @property (nonatomic, assign) WXMPOPChooseType chooseType;
 @property (nonatomic, assign) WXMPOPViewAnimationType popupAnimationType;
 @property (nonatomic, assign) WXMPOPViewPriorityType priorityType;

@@ -7,7 +7,9 @@
 //
 
 #import "WXMPOPBaseInterfaceView.h"
-
+@interface WXMPOPBaseInterfaceView ()
+@property (nonatomic, strong) UIView *popButtonView;
+@end
 @implementation WXMPOPBaseInterfaceView
 
 #pragma mark WXMPOPViewAnimationProtocol
@@ -29,28 +31,28 @@
     return self.viewController;
 }
 
+- (instancetype)init {
+    if (self = [super init]) [self defaultInterfaceView];
+    return self;
+}
+
 - (void)setChooseType:(WXMPOPChooseType)chooseType {
     _chooseType = chooseType;
     if (chooseType == WXMPOPChooseTypeNone) {
-        
-        if (_sureButton) [_sureButton removeFromSuperview];
-        if (_cancleButton) [_cancleButton removeFromSuperview];
-        if (_buttonHorizontalLine) [_buttonHorizontalLine removeFromSuperlayer];
-        if (_buttonVerticalLine) [_buttonVerticalLine removeFromSuperlayer];
+        if (_popButtonView) [_popButtonView removeFromSuperview];
         
     } else if (chooseType == WXMPOPChooseTypeSingle) {
         
-        [self addSubview:self.cancleButton];
-        [self.layer addSublayer:self.buttonHorizontalLine];
+        [self addSubview:self.popButtonView];
+        [self.popButtonView addSubview:self.cancleButton];
         if (_sureButton) [_sureButton removeFromSuperview];
         if (_buttonVerticalLine) [_buttonVerticalLine removeFromSuperlayer];
         
     } else if (chooseType == WXMPOPChooseTypeDouble) {
         
-        [self addSubview:self.sureButton];
-        [self addSubview:self.cancleButton];
-        [self.layer addSublayer:self.buttonVerticalLine];
-        [self.layer addSublayer:self.buttonHorizontalLine];
+        [self addSubview:self.popButtonView];
+        [self.popButtonView addSubview:self.sureButton];
+        [self.popButtonView addSubview:self.cancleButton];
     }
 }
 
@@ -61,32 +63,53 @@
 
 /** 布局 */
 - (void)setupAutomaticLayout {
+    [_titleLabel sizeToFit];
     
+    CGFloat contentEdge = (_contentEdge == 0 ?  WXMPOPContentEdge : _contentEdge);
+    CGFloat centerX = self.frame.size.width / 2;
+    CGFloat buttonHeight = self.cancleButton.frame.size.height;
+    CGFloat buttonTop = self.totalOneselfHeight - buttonHeight;
+    
+    _titleLabel.frame = (CGRect){CGPointMake(0, contentEdge), _titleLabel.frame.size};
+    _titleLabel.center = CGPointMake(centerX, _titleLabel.center.y);
+    
+    if (_chooseType == WXMPOPChooseTypeSingle) {
+        _cancleButton.frame = CGRectMake(0, 0, centerX * 2, buttonHeight);
+    } else if (_chooseType == WXMPOPChooseTypeDouble) {
+        _cancleButton.frame = CGRectMake(0, 0, centerX, buttonHeight);
+        _sureButton.frame = CGRectMake(centerX, 0, centerX, buttonHeight);
+    }
+    
+    self.popButtonView.frame = CGRectMake(0, buttonTop, centerX * 2, buttonHeight);
+    self.buttonHorizontalLine.frame = CGRectMake(0, 0, self.frame.size.width, 0.5);
+    self.buttonVerticalLine.frame = CGRectMake(centerX, 0, 0.5, buttonHeight);
 }
 
-/** 固定高度 */
+/** 固定高度 除去messageTextView */
 - (CGFloat)minImmobilizationHeight {
     CGFloat titleHeight = 0;
     CGFloat allEdge = 0;
-    /** CGFloat messageHeight = 0; */
-    /** CGFloat buttonHeight = 0; */
-   
+    
     if (_titleLabel.text.length > 0) {
         titleHeight = _titleLabel.frame.size.height;
-        allEdge = WXMPOPContentEdge * 2;
+        allEdge = (_contentEdge == 0 ?  WXMPOPContentEdge : _contentEdge) * 2;
+    } else {
+        allEdge = (_messageEdge == 0 ?  WXMPOPContentEdge : _messageEdge) * 2;
     }
-  
-    
     return titleHeight + allEdge + WXMPOPButtonHeight;
 }
 
 /** 总高度 */
 - (CGFloat)totalOneselfHeight {
-    return 0;
+    return self.frame.size.height;
 }
 
 - (void)didMoveToSuperview {
-    if (self.superview) [self setupAutomaticLayout];
+    if (self.superview) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self setupAutomaticLayout];
+        });
+    }
 }
 
 #pragma mark Action
@@ -105,10 +128,9 @@
     }
 }
 
-/**  */
-- (void)setYWithView:(UIView *)targetView y:(CGFloat)y {
+- (void)setYWithView:(UIView *)targetView absoluteY:(CGFloat)absoluteY {
     CGRect frame = targetView.frame;
-    frame.origin.y = y;
+    frame.origin.y = absoluteY;
     targetView.frame = frame;
 }
 
@@ -159,6 +181,7 @@
 - (CALayer *)buttonHorizontalLine {
     if (!_buttonHorizontalLine) {
         _buttonHorizontalLine = [[CALayer alloc] init];
+        _buttonHorizontalLine.backgroundColor = WXMPOPLineColor.CGColor;
     }
     return _buttonHorizontalLine;
 }
@@ -166,6 +189,7 @@
 - (CALayer *)buttonVerticalLine {
     if (!_buttonVerticalLine) {
         _buttonVerticalLine = [[CALayer alloc] init];
+        _buttonVerticalLine.backgroundColor = WXMPOPLineColor.CGColor;
     }
     return _buttonVerticalLine;
 }
@@ -195,6 +219,7 @@
     if (!_cancleButton) {
         UIControlEvents event = UIControlEventTouchUpInside;
         _cancleButton = [[UIButton alloc] init];
+        _cancleButton.titleLabel.font = [UIFont systemFontOfSize:WXMPOPButtonFont];
         [_cancleButton setTitleColor:WXMPOPButtonColor forState:UIControlStateNormal];
         [_cancleButton addTarget:self action:@selector(touchEvent:) forControlEvents:event];
     }
@@ -205,12 +230,22 @@
     if (!_sureButton) {
         UIControlEvents event = UIControlEventTouchUpInside;
         _sureButton = [[UIButton alloc] init];
+        _sureButton.titleLabel.font = [UIFont systemFontOfSize:WXMPOPButtonFont];
         [_sureButton setTitleColor:WXMPOPButtonColor forState:UIControlStateNormal];
         [_cancleButton addTarget:self action:@selector(touchEvent:) forControlEvents:event];
     }
     return _sureButton;
 }
 
-
+- (UIView *)popButtonView {
+    if (!_popButtonView) {
+        _popButtonView = [[UIView alloc] init];
+        _popButtonView.frame = CGRectMake(0, 0, self.frame.size.width, WXMPOPButtonHeight);
+        _popButtonView.backgroundColor = [UIColor clearColor];
+        [_popButtonView.layer addSublayer:self.buttonVerticalLine];
+        [_popButtonView.layer addSublayer:self.buttonHorizontalLine];
+    }
+    return _popButtonView;
+}
 @end
 

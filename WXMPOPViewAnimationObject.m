@@ -170,10 +170,9 @@
     return nil;
 }
 
-/**  */
 - (void)setContentY:(CGFloat)y {
-    CGRect frame = _contentView.frame;
+    CGRect frame = self.contentView.frame;
     frame.origin.y = y;
-    _contentView.frame = frame;
+    self.contentView.frame = frame;
 }
 @end
