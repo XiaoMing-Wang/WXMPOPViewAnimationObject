@@ -80,7 +80,7 @@
         _sureButton.frame = CGRectMake(centerX, 0, centerX, buttonHeight);
     }
     
-    self.popButtonView.frame = CGRectMake(0, buttonTop, centerX * 2, buttonHeight);
+    self.popButtonView.frame = CGRectMake(0, buttonTop, self.frame.size.width, buttonHeight);
     self.buttonHorizontalLine.frame = CGRectMake(0, 0, self.frame.size.width, 0.5);
     self.buttonVerticalLine.frame = CGRectMake(centerX, 0, 0.5, buttonHeight);
 }
@@ -159,6 +159,7 @@
         _messageTextView = [[UITextView alloc] init];
         _messageTextView.textAlignment = NSTextAlignmentLeft;
         _messageTextView.font = [UIFont systemFontOfSize:WXMPOPMessageFont];
+        _messageTextView.textColor = WXMPOPMessageColor;
     }
     return _messageTextView;
 }
@@ -166,6 +167,8 @@
 - (UITextField *)inputTextField {
     if (!_inputTextField) {
         _inputTextField = [[UITextField alloc] init];
+        _inputTextField.textColor = WXMPOPTitleColor;
+        _inputTextField.font = [UIFont systemFontOfSize:WXMPOPMessageFont];
     }
     return _inputTextField;
 }
@@ -197,6 +200,7 @@
 - (CALayer *)reservedLine {
     if (!_reservedLine) {
         _reservedLine = [[CALayer alloc] init];
+        _reservedLine.backgroundColor = WXMPOPLineColor.CGColor;
     }
     return _reservedLine;
 }
