@@ -5,83 +5,55 @@
 //  Created by wq on 2019/6/22.
 //  Copyright © 2019年 wxm. All rights reserved.
 //
-#define WXMPOPWidth 270
-#define WXMPOPMinHeight 200
-#define WXMPOPContentEdge 25
-#define WXMPOPMessageEdge 15
-#define WXMPOPButtonHeight 45
-
-#define WXMPOPTitleFont 16
-#define WXMPOPMessageFont 16
-#define WXMPOPButtonFont 16
-
-#define WXMPOPTitleColor [UIColor blackColor]
-#define WXMPOPMessageColor [UIColor blackColor]
-#define WXMPOPButtonColor [UIColor blackColor]
-#define WXMPOPLineColor [UIColor lightGrayColor]
-
 #import <UIKit/UIKit.h>
+#import "WXMPOPBaseConfiguration.h"
 #import "WXMPOPViewAnimationObject.h"
+@interface WXMPOPBaseInterfaceView : UIView 
 
-@protocol WXMPOPBaseCallbackProtocol <NSObject>
-@optional
-- (void)popCallbackProtocolWithIndex:(NSInteger)index;
-- (void)popCallbackProtocolWithIdentString:(NSString *)aString;
-@end
-
-@interface WXMPOPBaseInterfaceView : UIView <WXMPOPViewAnimationProtocol>
-
-/** 按钮样式 */
-typedef NS_ENUM(NSUInteger, WXMPOPChooseType) {
-    WXMPOPChooseTypeNone = 0,
-    WXMPOPChooseTypeSingle,
-    WXMPOPChooseTypeDouble,
-};
-
+/** 标题 */
 @property (nonatomic, strong) UILabel *titleLabel;
-@property (nonatomic, strong) UILabel *reservedLabel;
+
+/** 描述 */
 @property (nonatomic, strong) UITextView *messageTextView;
-@property (nonatomic, strong) UITextField *inputTextField;
-@property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, strong) UIScrollView *scrollView;
+
+/** 按钮 */
 @property (nonatomic, strong) UIButton *cancleButton;
 @property (nonatomic, strong) UIButton *sureButton;
+@property (nonatomic, strong) UIView *popButtonView;
 
+/** 线条 */
 @property (nonatomic, strong) CALayer *titleLine;
 @property (nonatomic, strong) CALayer *buttonHorizontalLine;
 @property (nonatomic, strong) CALayer *buttonVerticalLine;
-@property (nonatomic, strong) CALayer *reservedLine;
 
+/** 边距 */
 @property (nonatomic, assign) CGFloat contentEdge;
 @property (nonatomic, assign) CGFloat messageEdge;
-@property (nonatomic, assign) WXMPOPChooseType chooseType;
-@property (nonatomic, assign) WXMPOPViewAnimationType popupAnimationType;
-@property (nonatomic, assign) WXMPOPViewPriorityType priorityType;
+
+/** 触摸消失 */
 @property (nonatomic, assign) BOOL touchBlackHiden;
 @property (nonatomic, assign) BOOL touchButtonHiden;
-@property (nonatomic, weak) WXMPOPViewAnimationObject *animationObject;
+
+/** 按钮类型 */
+@property (nonatomic, assign) WXMPOPChooseType chooseType;
+
+/** 弹窗类型 */
+@property (nonatomic, assign) WXMPOPViewAnimationType popupAnimationType;
+
+/** 优先级 */
+@property (nonatomic, assign) WXMPOPViewPriorityType  priorityType;
+
+/** 弹窗对象 */
 @property (nonatomic, weak) UIViewController *viewController;
+@property (nonatomic, weak) WXMPOPViewAnimationObject *animationObject;
 
 @property (nonatomic, copy) void (^callback)(NSInteger index);
 @property (nonatomic, copy) void (^callbackTitle)(NSString *ident);
 @property (nonatomic, weak) id<WXMPOPBaseCallbackProtocol> delegate;
 
-/** 默认样式 */
-- (void)defaultInterfaceView;
-
-/** 布局 */
-- (void)setupAutomaticLayout;
-
-/** 显示弹窗 */
-- (void)showpopupView;
-
-/** 隐藏弹窗 */
-- (void)hidepopupView;
-
-/** 固定高度 */
-- (CGFloat)minImmobilizationHeight;
-
-/** 总高度 */
-- (CGFloat)totalOneselfHeight;
+/** 弹窗控制器 */
+- (UIViewController *)wp_displayViewController;
+- (void)wp_showpopupView;
+- (void)wp_hidepopupView;
 
 @end
