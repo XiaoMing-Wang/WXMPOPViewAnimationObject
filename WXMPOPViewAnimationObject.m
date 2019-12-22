@@ -45,11 +45,11 @@ static NSMutableArray *aniObjectArray;
 
 - (void)setupInterface {
     
-    /** 灰色背景 */
-    _blackView = [[UIControl alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    _blackView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.5];
-    _blackView.userInteractionEnabled = YES;
-    _blackView.alpha = 0;
+    /** 黑色背景 */
+    self.blackView = [[UIControl alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    self.blackView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.4];
+    self.blackView.userInteractionEnabled = YES;
+    self.blackView.alpha = 0;
     
     self.tag = WXMPopupHelpSign;
     self.frame = CGRectMake(0, 0, _blackView.frame.size.width, _blackView.frame.size.height);
@@ -85,12 +85,12 @@ static NSMutableArray *aniObjectArray;
     if (contentVC) superView = contentVC.view;
     if ([contentVC isKindOfClass:[UINavigationController class]])  {
         UINavigationController * navigation = (UINavigationController *) contentVC;
-        _interactivePop = navigation.interactivePopGestureRecognizer.enabled;
+        self.interactivePop = navigation.interactivePopGestureRecognizer.enabled;
         navigation.interactivePopGestureRecognizer.enabled = NO;
         superView = navigation.view;
     }
     
-    self.bounds = _blackView.bounds = superView.bounds;
+    self.bounds = self.blackView.bounds = superView.bounds;
     WXMPOPViewAnimationObject *previous = [superView viewWithTag:WXMPopupHelpSign];
     if (previous && self.contentView.priorityType == WXMPOPViewPriorityTypeWait) return;
     
@@ -112,25 +112,32 @@ static NSMutableArray *aniObjectArray;
     if (self.isAnimation) return;
     self.isAnimation = YES;
     self.contentView.alpha = 0;
-    
+
     if (self.contentView.popupAnimationType == WXMPOPViewAnimationDefault) {
-        self.contentView.center = CGPointMake(self.frame.size.width/2, self.frame.size.height/2);
+        self.contentView.center = CGPointMake(self.frame.size.width / 2, self.frame.size.height / 2);
         self.contentView.transform = CGAffineTransformMakeScale(0.75, 0.75);
+        
         [UIView animateWithDuration:0.35 delay:0 usingSpringWithDamping:1.0 initialSpringVelocity:0.0 options:UIViewAnimationOptionLayoutSubviews animations:^{
             self.blackView.alpha = 1.0;
             self.contentView.alpha = 1.0;
             self.contentView.transform = CGAffineTransformIdentity;
-        } completion:^(BOOL finished) { self.isAnimation = NO; }];
+        } completion:^(BOOL finished) {
+            self.isAnimation = NO;
+        }];
         
     } else if (self.contentView.popupAnimationType == WXMPOPViewAnimationBottomSlide) {
         
+        self.contentView.alpha = 1.0;
         [self setContentY:[UIScreen mainScreen].bounds.size.height];
         self.oldRect = self.contentView.frame;
-        [UIView animateWithDuration:0.32 delay:0 options:0 animations:^{
-            CGFloat height = self.frame.size.height;
+        [UIView animateWithDuration:0.30 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+            self.blackView.alpha = 1.0;
+            CGFloat height = self.contentView.frame.size.height;
             CGFloat y = [UIScreen mainScreen].bounds.size.height - height;
             [self setContentY:y];
-        } completion:^(BOOL finished) { self.isAnimation = NO; }];
+        } completion:^(BOOL finished) {
+            self.isAnimation = NO;
+        }];
     }
 }
 
@@ -147,7 +154,6 @@ static NSMutableArray *aniObjectArray;
         [self removeFromSuperview];
         [aniObjectArray removeObject:self];
         if (finished) [self judgeNextPopover];
-        
         if (contentVC && [contentVC isKindOfClass:[UINavigationController class]])  {
             UINavigationController * navigation = (UINavigationController *)contentVC;
             navigation.interactivePopGestureRecognizer.enabled = self.interactivePop;

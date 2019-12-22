@@ -66,6 +66,7 @@
 }
 
 - (void)setupAutomaticLayoutMessage {
+    [self.messageTextView sizeToFit];
     CGFloat bottom = self.messageTextView.frame.origin.y+self.messageTextView.frame.size.height;
     CGFloat allHeight = bottom + WXMPOPButtonHeight + WXMPOPMessageEdge + 2.5;
     self.frame = CGRectMake(0, 0, WXMPOPWidth, allHeight);
