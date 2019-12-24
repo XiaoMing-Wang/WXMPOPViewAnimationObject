@@ -64,26 +64,26 @@ typedef NS_ENUM(NSUInteger, WXMPOPChooseType) {
 };
 
 typedef NS_ENUM(NSUInteger, WXMPOPViewAnimationType) {
-    
+
     /** 中间弹出 */
     WXMPOPViewAnimationDefault = 0,
-    
+
     /** 底部弹出 */
     WXMPOPViewAnimationBottomSlide,
 };
 
 /** 弹窗优先级 */
 typedef NS_ENUM(NSUInteger, WXMPOPViewPriorityType) {
-    
+
     /** 默认 */
     WXMPOPViewPriorityTypeDefault = 0,
-    
+
     /** 等待其他弹窗 */
     WXMPOPViewPriorityTypeWait,
-    
+
     /** 低 */
     WXMPOPViewPriorityTypeLow,
-    
+
     /** 高 */
     WXMPOPViewPriorityTypeHigh,
 };

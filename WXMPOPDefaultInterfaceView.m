@@ -127,6 +127,8 @@
     return self;
 }
 
-- (void)setupCustomSettings {}
+- (void)setupCustomSettings {
+    
+}
 
 @end

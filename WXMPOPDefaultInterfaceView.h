@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setupAutomaticLayout;
 - (void)setupAutomaticLayoutMessage;
 
-/** 固定高度(标题+标题上边距+按钮高度) */
+/** 固定高度(标题 + 标题上边距 + 按钮高度) */
 - (CGFloat)minImmobilizationHeight;
 
 /** 总高度 */

@@ -45,7 +45,7 @@ static NSMutableArray *aniObjectArray;
 
 - (void)setupInterface {
     
-    /** 灰色背景 */
+    /** 黑色背景 */
     _blackView = [[UIControl alloc] initWithFrame:[UIScreen mainScreen].bounds];
     _blackView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.5];
     _blackView.userInteractionEnabled = YES;
@@ -85,12 +85,12 @@ static NSMutableArray *aniObjectArray;
     if (contentVC) superView = contentVC.view;
     if ([contentVC isKindOfClass:[UINavigationController class]])  {
         UINavigationController * navigation = (UINavigationController *) contentVC;
-        _interactivePop = navigation.interactivePopGestureRecognizer.enabled;
+        self.interactivePop = navigation.interactivePopGestureRecognizer.enabled;
         navigation.interactivePopGestureRecognizer.enabled = NO;
         superView = navigation.view;
     }
     
-    self.bounds = _blackView.bounds = superView.bounds;
+    self.bounds = self.blackView.bounds = superView.bounds;
     WXMPOPViewAnimationObject *previous = [superView viewWithTag:WXMPopupHelpSign];
     if (previous && self.contentView.priorityType == WXMPOPViewPriorityTypeWait) return;
     
@@ -147,7 +147,6 @@ static NSMutableArray *aniObjectArray;
         [self removeFromSuperview];
         [aniObjectArray removeObject:self];
         if (finished) [self judgeNextPopover];
-        
         if (contentVC && [contentVC isKindOfClass:[UINavigationController class]])  {
             UINavigationController * navigation = (UINavigationController *)contentVC;
             navigation.interactivePopGestureRecognizer.enabled = self.interactivePop;
