@@ -8,7 +8,7 @@
 #import <UIKit/UIKit.h>
 #import "WXMPOPBaseConfiguration.h"
 #import "WXMPOPViewAnimationObject.h"
-@interface WXMPOPBaseInterfaceView : UIView 
+@interface WXMPOPBaseInterfaceView : UIView
 
 /** 标题 */
 @property (nonatomic, strong) UILabel *titleLabel;
@@ -41,7 +41,7 @@
 @property (nonatomic, assign) WXMPOPViewAnimationType popupAnimationType;
 
 /** 优先级 */
-@property (nonatomic, assign) WXMPOPViewPriorityType  priorityType;
+@property (nonatomic, assign) WXMPOPViewPriorityType priorityType;
 
 /** 弹窗对象 */
 @property (nonatomic, weak) UIViewController *viewController;
