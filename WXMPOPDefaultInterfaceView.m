@@ -61,7 +61,7 @@
     CGFloat messageWidth = (self.frame.size.width ?: WXMPOPWidth ) - 2 * WXMPOPMessageLREdge;
     CGFloat messageHeight = self.messageTextView.frame.size.height;
     self.messageTextView.frame = (CGRect) {0, messageTop, messageWidth, messageHeight};
-    self.messageTextView.center=CGPointMake(self.frame.size.width/2,self.messageTextView.center.y);
+    self.messageTextView.center = CGPointMake(self.frame.size.width / 2 ,self.messageTextView.center.y);
     [self setDefaultOptions];
 }
 
