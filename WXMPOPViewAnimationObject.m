@@ -46,10 +46,10 @@ static NSMutableArray *aniObjectArray;
 - (void)setupInterface {
     
     /** 黑色背景 */
-    _blackView = [[UIControl alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    _blackView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.5];
-    _blackView.userInteractionEnabled = YES;
-    _blackView.alpha = 0;
+    self.blackView = [[UIControl alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    self.blackView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.5];
+    self.blackView.userInteractionEnabled = YES;
+    self.blackView.alpha = 0;
     
     self.tag = WXMPopupHelpSign;
     self.frame = CGRectMake(0, 0, _blackView.frame.size.width, _blackView.frame.size.height);
@@ -59,7 +59,7 @@ static NSMutableArray *aniObjectArray;
     [self setTouchBlackHiden:self.contentView.touchBlackHiden];
     
     self.contentView.alpha = 0;
-    self.contentView.center = CGPointMake(self.frame.size.width / 2, self.frame.size.height / 2);
+    self.contentView.center = CGPointMake(self.frame.size.width/2, self.frame.size.height/2);
     [self addSubview:self.blackView];
     [self addSubview:self.contentView];
     
@@ -113,8 +113,11 @@ static NSMutableArray *aniObjectArray;
     self.isAnimation = YES;
     self.contentView.alpha = 0;
     
+    CGFloat targetH = self.frame.size.height;
+    if (targetH > KHeight) targetH = KHeight;
+    
     if (self.contentView.popupAnimationType == WXMPOPViewAnimationDefault) {
-        self.contentView.center = CGPointMake(self.frame.size.width/2, self.frame.size.height/2);
+        self.contentView.center = CGPointMake(self.frame.size.width / 2, targetH / 2);
         self.contentView.transform = CGAffineTransformMakeScale(0.75, 0.75);
         [UIView animateWithDuration:0.35 delay:0 usingSpringWithDamping:1.0 initialSpringVelocity:0.0 options:UIViewAnimationOptionLayoutSubviews animations:^{
             self.blackView.alpha = 1.0;
@@ -139,7 +142,9 @@ static NSMutableArray *aniObjectArray;
     
     [self.contentView endEditing:YES];
     UIViewController *contentVC = self.contentView.viewController;
-    [UIView animateWithDuration:0.15 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+    CGFloat duration = 0.15;
+    if (self.contentView.popupAnimationType == WXMPOPViewAnimationBottomSlide) duration = .1;
+    [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
         self.blackView.alpha = 0.0;
         self.contentView.alpha = 0.0;
     } completion:^(BOOL finished) {
