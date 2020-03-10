@@ -30,9 +30,13 @@
 @property (nonatomic, assign) CGFloat contentEdge;
 @property (nonatomic, assign) CGFloat messageEdge;
 
+/** 垂直偏移 原始位置是正居中 */
+@property (nonatomic, assign) CGFloat verticalOffset;
+
 /** 触摸消失 */
 @property (nonatomic, assign) BOOL touchBlackHiden;
 @property (nonatomic, assign) BOOL touchButtonHiden;
+@property (nonatomic, assign) BOOL decline;
 
 /** 按钮类型 */
 @property (nonatomic, assign) WXMPOPChooseType chooseType;

@@ -26,6 +26,15 @@
     [self setupAutomaticLayout];
 }
 
+- (void)setupAutomaticLayoutMessage {
+    [self.messageTextView sizeToFit];
+    CGFloat bottom = self.messageTextView.frame.origin.y + self.messageTextView.frame.size.height;
+    CGFloat messageEdge = (self.messageEdge == 0) ? WXMPOPMessageEdge : (self.messageEdge - 10);
+    CGFloat allHeight = bottom + WXMPOPButtonHeight + messageEdge + 2.5;
+    self.frame = CGRectMake(0, 0, WXMPOPWidth, allHeight);
+    [self setupAutomaticLayout];
+}
+
 /** 固定高度 除去messageTextView */
 - (CGFloat)minImmobilizationHeight {
     CGFloat titleHeight = 0;
@@ -52,27 +61,21 @@
     [self.titleLabel sizeToFit];
     [self.messageTextView sizeToFit];
     
-    CGFloat contentEdge = (self.contentEdge == 0 ?  WXMPOPContentEdge : self.contentEdge);
-    self.titleLabel.frame = (CGRect) {CGPointMake(0, contentEdge), self.titleLabel.frame.size};
+    CGFloat contentEdge = (self.contentEdge == 0 ? WXMPOPContentEdge : self.contentEdge);
+    self.titleLabel.frame = (CGRect){CGPointMake(0, contentEdge), self.titleLabel.frame.size};
     self.titleLabel.center = CGPointMake(self.frame.size.width / 2, self.titleLabel.center.y);
     
     CGFloat titleBottom = self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height;
-    CGFloat messageTop  = titleBottom+(self.messageEdge==0?WXMPOPMessageEdge:self.messageEdge);
-    CGFloat messageWidth = (self.frame.size.width ?: WXMPOPWidth ) - 2 * WXMPOPMessageLREdge;
-    CGFloat messageHeight = self.messageTextView.frame.size.height;
-    self.messageTextView.frame = (CGRect) {0, messageTop, messageWidth, messageHeight};
+    if (self.popsTitle.length == 0) titleBottom = 0;
+    CGFloat messageTop = titleBottom + (self.messageEdge == 0 ? WXMPOPMessageEdge : self.messageEdge);
+    CGFloat messageWidth = (self.frame.size.width ?: WXMPOPWidth) - 2 * WXMPOPMessageLREdge;
     
-    CGFloat centerY = self.messageTextView.center.y;
-    self.messageTextView.center = CGPointMake(self.frame.size.width / 2 ,centerY);
+    CGFloat messageHeight = self.messageTextView.frame.size.height;
+    self.messageTextView.frame = (CGRect){0, messageTop, messageWidth, messageHeight};
+    self.messageTextView.center = CGPointMake(self.frame.size.width / 2, self.messageTextView.center.y);
+    
+    if (!self.backgroundColor) self.backgroundColor = [UIColor whiteColor];
     [self setDefaultOptions];
-}
-
-- (void)setupAutomaticLayoutMessage {
-    [self.messageTextView sizeToFit];
-    CGFloat bottom = self.messageTextView.frame.origin.y+self.messageTextView.frame.size.height;
-    CGFloat allHeight = bottom + WXMPOPButtonHeight + WXMPOPMessageEdge + 2.5;
-    self.frame = CGRectMake(0, 0, WXMPOPWidth, allHeight);
-    [self setupAutomaticLayout];
 }
 
 - (void)setChooseType:(WXMPOPChooseType)chooseType {
@@ -83,12 +86,17 @@
         [self.buttonVerticalLine removeFromSuperlayer];
         [self.buttonHorizontalLine removeFromSuperlayer];
         
-    } else if (chooseType == WXMPOPChooseTypeSingle) {
+    } else if (chooseType == WXMPOPChooseTypeSingle || chooseType == WXMPOPChooseTypeSingleSure) {
         
         [self addSubview:self.popButtonView];
-        [self.popButtonView addSubview:self.cancleButton];
-        [self.sureButton removeFromSuperview];
-        
+        if (chooseType == WXMPOPChooseTypeSingle) {
+            [self.popButtonView addSubview:self.cancleButton];
+            [self.sureButton removeFromSuperview];
+        } else {
+            [self.popButtonView addSubview:self.sureButton];
+            [self.cancleButton removeFromSuperview];
+        }
+                
         [self.popButtonView.layer addSublayer:self.buttonHorizontalLine];
         [self.buttonVerticalLine removeFromSuperlayer];
         
@@ -110,15 +118,16 @@
     CGFloat centerX = self.frame.size.width / 2;
     CGFloat buttonHeight = self.cancleButton.frame.size.height ?: WXMPOPButtonHeight;
     CGFloat buttonTop = self.totalOneselfHeight - buttonHeight;
-    
-    if (self.chooseType == WXMPOPChooseTypeSingle) {
+
+    if (self.chooseType == WXMPOPChooseTypeSingle || self.chooseType == WXMPOPChooseTypeSingleSure) {
+        self.sureButton.frame = CGRectMake(0, 0, self.frame.size.width, buttonHeight);
         self.cancleButton.frame = CGRectMake(0, 0, self.frame.size.width, buttonHeight);
-        
+
     } else if (self.chooseType == WXMPOPChooseTypeDouble) {
         self.cancleButton.frame = CGRectMake(0, 0, centerX, buttonHeight);
         self.sureButton.frame = CGRectMake(centerX, 0, centerX, buttonHeight);
     }
-    
+
     self.popButtonView.frame = CGRectMake(0, buttonTop, self.frame.size.width, buttonHeight);
     self.buttonHorizontalLine.frame = CGRectMake(0, 0, self.frame.size.width, 0.5);
     self.buttonVerticalLine.frame = CGRectMake(centerX, 0, 0.5, buttonHeight);

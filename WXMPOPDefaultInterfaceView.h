@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** 初始化 */
 - (void)setupCustomSettings;
 
-/** 布局 */
+/** 自适应高度布局  需要子类调用 */
 - (void)setupAutomaticLayout;
 - (void)setupAutomaticLayoutMessage;
 
