@@ -68,7 +68,7 @@ static inline UIImage *COLORTOIMAGE(UIColor *color) {
         _titleLabel = [[UILabel alloc] init];
         _titleLabel.textAlignment = NSTextAlignmentCenter;
         _titleLabel.textColor = WXMPOPTitleColor;
-        _titleLabel.numberOfLines = 1;
+        _titleLabel.numberOfLines = 0;
         _titleLabel.font = WXMPOPTitleFont;
     }
     return _titleLabel;

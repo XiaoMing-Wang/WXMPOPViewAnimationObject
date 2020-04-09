@@ -11,17 +11,30 @@
 #define WXMRGBAColor(r, g, b) \
 [UIColor colorWithRed:(r) / 255.0f green:(g) / 255.0f blue:(b) / 255.0f alpha:1]
 
+/** iphoneX */
+#define WXMPOPIPhoneX ({  \
+BOOL isPhoneX = NO;  \
+if (@available(iOS 11.0, *)) {  \
+    isPhoneX = [[UIApplication sharedApplication] delegate].window.safeAreaInsets.bottom > 0.0; \
+} (isPhoneX); })
+
 /** 弹窗宽度系统弹窗宽度270 */
 #define WXMPOPWidth        270
 
 /** 最小高度 */
 #define WXMPOPMinHeight    200
 
+/** 圆角 WXMPOPViewAnimationDefaultcal才有 */
+#define WXMPOPRoundedCorners  12
+
 /** 标题上下间隔 */
 #define WXMPOPContentEdge  25
 
+/** 标题左右边距 */
+#define WXMPOPContentLREdge  14
+
 /** 描述上下间隔 */
-#define WXMPOPMessageEdge  5
+#define WXMPOPMessageEdge  6.5
 
 /** 描述左右边距 */
 #define WXMPOPMessageLREdge  14
@@ -59,7 +72,7 @@ typedef NS_ENUM(NSUInteger, WXMPOPChooseType) {
     /** 单个按钮取消 */
     WXMPOPChooseTypeSingle,
 
-    /** 单个按钮取消 */
+    /** 单个按钮确定 */
     WXMPOPChooseTypeSingleSure,
 
     /** 两个按钮 */
@@ -80,13 +93,13 @@ typedef NS_ENUM(NSUInteger, WXMPOPViewPriorityType) {
 
     /** 默认 */
     WXMPOPViewPriorityTypeDefault = 0,
-
+    
     /** 等待其他弹窗 */
     WXMPOPViewPriorityTypeWait,
-
+    
     /** 低 */
     WXMPOPViewPriorityTypeLow,
-
+    
     /** 高 */
     WXMPOPViewPriorityTypeHigh,
 };

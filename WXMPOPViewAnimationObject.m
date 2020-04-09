@@ -70,18 +70,25 @@ static NSMutableArray *aniObjectArray;
         
         self.oldRect = self.contentView.frame;
         self.locationBottom = rect.origin.y + self.contentView.frame.size.height;
-        [KNotificationCenter addObserver:self selector:@selector(keyBoardWillShow:)
-                                    name:UIKeyboardWillShowNotification object:nil];
-        [KNotificationCenter addObserver:self selector:@selector(keyBoardWillHide:)
-                                    name:UIKeyboardWillHideNotification object:nil];
+        
+        [KNotificationCenter addObserver:self
+                                selector:@selector(keyBoardWillShow:)
+                                    name:UIKeyboardWillShowNotification
+                                  object:nil];
+        
+        [KNotificationCenter addObserver:self
+                                selector:@selector(keyBoardWillHide:)
+                                    name:UIKeyboardWillHideNotification
+                                  object:nil];
     }
 }
 
 /** 显示弹窗 */
 - (void)animationShowpopupView {
-    UIView *superView = [[[UIApplication sharedApplication] delegate] window];
+    UIView *superView = [[[UIApplication sharedApplication] delegate] window].rootViewController.view;
     if (self.superview) superView = self.superview;
     UIViewController *contentVC = self.contentView.viewController;
+    
     if (contentVC) superView = contentVC.view;
     if ([contentVC isKindOfClass:[UINavigationController class]])  {
         UINavigationController * navigation = (UINavigationController *) contentVC;
@@ -92,10 +99,10 @@ static NSMutableArray *aniObjectArray;
     
     self.bounds = self.blackView.bounds = superView.bounds;
     WXMPOPViewAnimationObject *previous = [superView viewWithTag:WXMPopupHelpSign];
-    if (previous && self.contentView.priorityType == WXMPOPViewPriorityTypeWait) return;
     
     int64_t delta = (int64_t)(0.0 * NSEC_PER_SEC);
     dispatch_queue_t queue = dispatch_get_main_queue();
+    if (previous && self.contentView.priorityType == WXMPOPViewPriorityTypeWait) return;
     if (previous && self.contentView.priorityType >= previous.contentView.priorityType) {
         [previous animationHidepopupView];
         delta = (int64_t)(0.35 * NSEC_PER_SEC);
@@ -119,12 +126,12 @@ static NSMutableArray *aniObjectArray;
         self.contentView.transform = CGAffineTransformMakeScale(0.75, 0.75);
         
         [UIView animateWithDuration:0.35 delay:0 usingSpringWithDamping:1.0 initialSpringVelocity:0.0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+            
             self.blackView.alpha = 1.0;
             self.contentView.alpha = 1.0;
             self.contentView.transform = CGAffineTransformIdentity;
-        } completion:^(BOOL finished) {
-            self.isAnimation = NO;
-        }];
+            
+        } completion:^(BOOL finished) { self.isAnimation = NO; }];
         
     } else if (self.contentView.popupAnimationType == WXMPOPViewAnimationBottomSlide) {
         
@@ -132,13 +139,13 @@ static NSMutableArray *aniObjectArray;
         [self setContentY:[UIScreen mainScreen].bounds.size.height];
         self.oldRect = self.contentView.frame;
         [UIView animateWithDuration:0.30 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+            
             self.blackView.alpha = 1.0;
             CGFloat height = self.contentView.frame.size.height;
             CGFloat y = [UIScreen mainScreen].bounds.size.height - height;
             [self setContentY:y];
-        } completion:^(BOOL finished) {
-            self.isAnimation = NO;
-        }];
+            
+        } completion:^(BOOL finished) { self.isAnimation = NO; }];
     }
 }
 
@@ -149,16 +156,22 @@ static NSMutableArray *aniObjectArray;
     UIViewController *contentVC = self.contentView.viewController;
     
     CGFloat duration = 0.15;
-    if (self.contentView.popupAnimationType == WXMPOPViewAnimationBottomSlide) duration = 0.1;
-    if (self.contentView.decline) duration = 0.22;
+    if (self.contentView.popupAnimationType == WXMPOPViewAnimationBottomSlide) duration = 0.10;
+    if (self.contentView.popupAnimationType == WXMPOPViewAnimationBottomSlide && self.contentView.decline) {
+        duration = 0.25;
+    }
+    
     [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
         
         self.blackView.alpha = 0.0;
         if (self.contentView.decline) {
+            
             CGRect rect = self.self.contentView.frame;
             rect.origin.y = [UIScreen mainScreen].bounds.size.height;
             self.self.contentView.frame = rect;
+            
         } else {
+            
             self.contentView.alpha = 0.0;
         }
         
@@ -177,7 +190,7 @@ static NSMutableArray *aniObjectArray;
 
 - (void)judgeNextPopover {
     WXMPOPViewAnimationObject *animationObject = aniObjectArray.firstObject;
-    if (animationObject&&animationObject.contentView.priorityType==WXMPOPViewPriorityTypeWait) {
+    if (animationObject && animationObject.contentView.priorityType == WXMPOPViewPriorityTypeWait) {
         int64_t delta = (int64_t)(0.35 * NSEC_PER_SEC);
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delta), dispatch_get_main_queue(), ^{
             [animationObject animationShowpopupView];
