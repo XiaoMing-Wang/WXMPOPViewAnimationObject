@@ -225,7 +225,9 @@
 
 /** 总宽度 */
 - (CGFloat)totalWidth {
-    return (self.popupAnimationType == WXMPOPViewAnimationBottomSlide) ? [UIScreen mainScreen].bounds.size.width : WXMPOPWidth;
+    return (self.popupAnimationType == WXMPOPViewAnimationBottomSlide) ?
+    [UIScreen mainScreen].bounds.size.width :
+    WXMPOPWidth;
 }
 
 @end
