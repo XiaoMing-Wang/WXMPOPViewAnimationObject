@@ -22,6 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
 /** 自适应高度布局 根据title和message适配 需要子类调用 */
 - (void)setupAutomaticLayout;
 
+/** 按钮点击事件 */
+- (void)touchEvent:(UIButton *)sender;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -41,16 +41,17 @@ static inline UIImage *COLORTOIMAGE(UIColor *color) {
 
 - (void)touchEvent:(UIButton *)sender {
     if (self.touchButtonHiden) [self.animationObject animationHidepopupView];
-    BOOL cancleIndex = (sender == self.sureButton);
+    NSInteger cancleIndex = (sender == self.sureButton);
+    if (sender.tag > 0) cancleIndex = sender.tag;
        
     if (self.callback) self.callback(cancleIndex);
     if (self.callbackTitle) self.callbackTitle(sender.titleLabel.text);
     
     if (self.delegate == nil) return;
     if ([self.delegate respondsToSelector:@selector(popCallbackProtocolWithIndex:)]) {
-        if (sender.tag > 1) cancleIndex = sender.tag;
         [self.delegate popCallbackProtocolWithIndex:cancleIndex];
     }
+    
     if ([self.delegate respondsToSelector:@selector(popCallbackProtocolWithIdentString:)]) {
         [self.delegate popCallbackProtocolWithIdentString:sender.titleLabel.text];
     }
@@ -149,5 +150,6 @@ static inline UIImage *COLORTOIMAGE(UIColor *color) {
     }
     return _popButtonView;
 }
+
 @end
 
