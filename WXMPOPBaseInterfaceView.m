@@ -31,6 +31,7 @@ static inline UIImage *COLORTOIMAGE(UIColor *color) {
 }
 
 - (void)wp_showpopupView {
+    [[[[UIApplication sharedApplication] delegate] window] endEditing:YES];
     [self.animationObject animationShowpopupView];
 }
 
@@ -40,12 +41,14 @@ static inline UIImage *COLORTOIMAGE(UIColor *color) {
 
 - (void)touchEvent:(UIButton *)sender {
     if (self.touchButtonHiden) [self.animationObject animationHidepopupView];
-    BOOL cancleIndex = (sender == _cancleButton);
+    BOOL cancleIndex = (sender == self.sureButton);
+       
     if (self.callback) self.callback(cancleIndex);
     if (self.callbackTitle) self.callbackTitle(sender.titleLabel.text);
     
     if (self.delegate == nil) return;
     if ([self.delegate respondsToSelector:@selector(popCallbackProtocolWithIndex:)]) {
+        if (sender.tag > 1) cancleIndex = sender.tag;
         [self.delegate popCallbackProtocolWithIndex:cancleIndex];
     }
     if ([self.delegate respondsToSelector:@selector(popCallbackProtocolWithIdentString:)]) {
@@ -65,8 +68,8 @@ static inline UIImage *COLORTOIMAGE(UIColor *color) {
         _titleLabel = [[UILabel alloc] init];
         _titleLabel.textAlignment = NSTextAlignmentCenter;
         _titleLabel.textColor = WXMPOPTitleColor;
-        _titleLabel.numberOfLines = 1;
         _titleLabel.font = WXMPOPTitleFont;
+        _titleLabel.numberOfLines = 0;
     }
     return _titleLabel;
 }
@@ -86,6 +89,7 @@ static inline UIImage *COLORTOIMAGE(UIColor *color) {
 - (CALayer *)titleLine {
     if (!_titleLine) {
         _titleLine = [[CALayer alloc] init];
+        _titleLine.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 0.5);
         _titleLine.backgroundColor = WXMPOPLineColor.CGColor;
     }
     return _titleLine;

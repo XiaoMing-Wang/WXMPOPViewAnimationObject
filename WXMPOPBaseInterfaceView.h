@@ -29,10 +29,17 @@
 /** 边距 */
 @property (nonatomic, assign) CGFloat contentEdge;
 @property (nonatomic, assign) CGFloat messageEdge;
+@property (nonatomic, assign) CGFloat roundedCorners;
+
+/** 垂直偏移 原始位置是正居中 */
+@property (nonatomic, assign) CGFloat verticalOffset;
 
 /** 触摸消失 */
 @property (nonatomic, assign) BOOL touchBlackHiden;
 @property (nonatomic, assign) BOOL touchButtonHiden;
+
+/** WXMPOPViewAnimationBottomSlide模式是否有收回动画 YES代表有 默认NO */
+@property (nonatomic, assign) BOOL decline;
 
 /** 按钮类型 */
 @property (nonatomic, assign) WXMPOPChooseType chooseType;

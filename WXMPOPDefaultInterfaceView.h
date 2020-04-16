@@ -17,17 +17,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *popsMessage;
 
 /** 初始化 */
-- (void)setupCustomSettings;
+- (void)initializationInterface;
 
-/** 布局 */
+/** 自适应高度布局 根据title和message适配 需要子类调用 */
 - (void)setupAutomaticLayout;
-- (void)setupAutomaticLayoutMessage;
-
-/** 固定高度(标题 + 标题上边距 + 按钮高度) */
-- (CGFloat)minImmobilizationHeight;
-
-/** 总高度 */
-- (CGFloat)totalOneselfHeight;
 
 @end
 
